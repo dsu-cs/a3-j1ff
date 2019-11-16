@@ -40,8 +40,14 @@ private:
     Node<T> *root;
     // the number of nodes in the tree
     int node_count;
+    
+    Node<T> *insertHelper(int val, Node<T> *root);
 
-    std::vector<T> *preorderHelper(Node<T> *node);
+    std::vector<T> *inorderHelper(std::vector<T> *v, Node<T> *node);
+
+    std::vector<T> *postorderHelper(std::vector<T> *v, Node<T> *node);
+    
+    std::vector<T> *preorderHelper(std::vector<T> *v, Node<T> *node);
 };
 
 template<class T>
@@ -65,7 +71,7 @@ template<class T>
  std::vector<T> * BST<T>::inorder()
 {
     std::vector<T> *vec = new std::vector<T>;
-
+    inorderHelper(vec, root);
     return vec;
 }
 
@@ -74,7 +80,7 @@ template<class T>
  std::vector<T> * BST<T>::preorder()
 {
     std::vector<T> *vec = new std::vector<T>;
-    vec = preorderHelper(root);
+    preorderHelper(vec, root);
     return vec;
 }
 
@@ -83,14 +89,14 @@ template<class T>
  std::vector<T> * BST<T>::postorder()
 {
     std::vector<T> *vec = new std::vector<T>;
-
+    postorderHelper(vec, root);
     return vec;
 }
 
 template<class T>
 void BST<T>::insert(T new_data)
 {
-
+    root = insertHelper(new_data, root);
 }
 
 
@@ -113,19 +119,59 @@ void BST<T>::remove(T val)
 template<class T>
 int BST<T>::get_size()
 {
-
+    return node_count;
 }
 
 template<class T>
-std::vector<T> * BST<T>::preorderHelper(Node<T> *node)
+Node<T> *BST<T>::insertHelper(int val, Node<T> *node)
 {
-    std::vector<T> *vect = new std::vector<T>;
-    
+    if(node == NULL){
+        Node<T> *tmp = new Node<T>;
+        tmp->set_data(val);
+        tmp->set_left(NULL);
+        tmp->set_right(NULL);
+        node_count++;
+        return tmp;
+    } else if(val < node->get_data()){
+        node->set_left(insertHelper(val, node->get_left()));
+    } else if(val > node->get_data()){
+        node->set_right(insertHelper(val, node->get_right()));
+    }
+    return node;
+}
+
+template <class T>
+std::vector<T> *BST<T>::inorderHelper(std::vector<T> *v, Node<T> *node)
+{
     if(node == NULL){
         return NULL;
     }
-    BST<T>::preorderHelper(node->get_left());
-    vect->push_back(node->get_data());
-    BST<T>::preorderHelper(node->get_right());
-    return vect;
+    inorderHelper(v, node->get_left());
+    v->push_back(node->get_data());
+    inorderHelper(v, node->get_right());
+    return v;
 }
+
+template <class T>
+std::vector<T> *BST<T>::preorderHelper(std::vector<T> *v, Node<T> *node)
+{
+    if(node == NULL){
+        return NULL;
+    }
+    v->push_back(node->get_data());
+    preorderHelper(v, node->get_left());
+    preorderHelper(v, node->get_right());
+    return v;
+}
+
+template <class T>
+std::vector<T> *BST<T>::postorderHelper(std::vector<T> *v, Node<T> *node)
+{
+    if(node == NULL){
+        return NULL;
+    }
+    postorderHelper(v, node->get_left());
+    postorderHelper(v, node->get_right());
+    v->push_back(node->get_data());
+    return v;
+}        
