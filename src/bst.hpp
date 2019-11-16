@@ -48,6 +48,8 @@ private:
     std::vector<T> *postorderHelper(std::vector<T> *v, Node<T> *node);
     
     std::vector<T> *preorderHelper(std::vector<T> *v, Node<T> *node);
+
+    Node<T> *searchHelper(Node<T> *node, int val);
 };
 
 template<class T>
@@ -103,7 +105,7 @@ void BST<T>::insert(T new_data)
 template<class T>
 Node<T> *BST<T>::search(T val)
 {
-
+    return searchHelper(root, val);
 }
 
 
@@ -174,4 +176,23 @@ std::vector<T> *BST<T>::postorderHelper(std::vector<T> *v, Node<T> *node)
     postorderHelper(v, node->get_right());
     v->push_back(node->get_data());
     return v;
-}        
+}
+
+template <class T>
+Node<T> *BST<T>::searchHelper(Node<T> *node, int val)
+{
+    if(node == NULL){
+        return NULL;
+    }
+    Node<T> *found = new Node<T>;
+    
+    if(node->get_data() == val){
+        return node;
+    } else if(val < node->get_data()){
+        searchHelper(node->get_left(), val);
+    } else if(val > node->get_data()){
+        searchHelper(node->get_right(), val);
+    }
+    
+
+}
