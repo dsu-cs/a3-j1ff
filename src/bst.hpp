@@ -40,6 +40,8 @@ private:
     Node<T> *root;
     // the number of nodes in the tree
     int node_count;
+
+    std::vector<T> *preorderHelper(Node<T> *node);
 };
 
 template<class T>
@@ -72,6 +74,7 @@ template<class T>
  std::vector<T> * BST<T>::preorder()
 {
     std::vector<T> *vec = new std::vector<T>;
+    vec = preorderHelper(root);
     return vec;
 }
 
@@ -111,4 +114,18 @@ template<class T>
 int BST<T>::get_size()
 {
 
+}
+
+template<class T>
+std::vector<T> * BST<T>::preorderHelper(Node<T> *node)
+{
+    std::vector<T> *vect = new std::vector<T>;
+    
+    if(node == NULL){
+        return NULL;
+    }
+    BST<T>::preorderHelper(node->get_left());
+    vect->push_back(node->get_data());
+    BST<T>::preorderHelper(node->get_right());
+    return vect;
 }
