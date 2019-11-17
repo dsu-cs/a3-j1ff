@@ -50,6 +50,8 @@ private:
     std::vector<T> *preorderHelper(std::vector<T> *v, Node<T> *node);
 
     Node<T> *searchHelper(Node<T> *node, int val);
+
+    Node<T> *removeHelper(Node<T> *node, int val);
 };
 
 template<class T>
@@ -113,10 +115,44 @@ Node<T> *BST<T>::search(T val)
 template<class T>
 void BST<T>::remove(T val)
 {
-
+    root = removeHelper(root, val);
 }
 
+template<class T>
+Node<T> *BST<T>::removeHelper(Node<T> *node, int val)
+{
+    if(node == NULL){ //base case
+        return node;
+    }
 
+    if(val < node->get_data()){ //if val is in left subtree
+        node->set_left(removeHelper(node->get_left(), val));
+    } else if(val > node->get_data()){ //if val is in right subtree
+        node->set_right(removeHelper(node->get_right(), val));
+    } else if(val == node->get_data()){
+        if(node->get_left() == NULL){
+            Node<T> *tmp = node->get_right();
+            delete(node);
+            return tmp;
+        } else if(node->get_right() == NULL){
+            Node<T> *tmp = node->get_left();
+            delete(node);
+            return tmp;
+        }
+
+        Node<T> *tmp = new Node<T>; 
+        tmp = node->get_right();
+       
+        while(tmp && tmp->get_left() != NULL){
+            tmp = tmp->get_left();
+        }
+        T data = tmp->get_data();
+        node->set_data(data);
+        node->set_right(removeHelper(node->get_right(), tmp->get_data()));
+}
+
+    return node;
+}
 
 template<class T>
 int BST<T>::get_size()
